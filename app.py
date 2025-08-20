@@ -16,7 +16,7 @@ def add_growth(df):
 df_category = add_growth(df_category)
 df_manufacturer = add_growth(df_manufacturer)
 
-st.title("Vahan Vehicle Registrations Dashboard")
+st.title("Automobile_Insights")
 
 st.sidebar.header("Filters")
 

@@ -60,7 +60,7 @@
 
 ## 🌐 Deployed Link
 
-\[Insert your deployed Streamlit app link here\]
+\[Deployed Link](https://huggingface.co/spaces/VGreatVig07/Automobile_Insights)
 
 ------------------------------------------------------------------------
 
