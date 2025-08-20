@@ -99,5 +99,35 @@ if not filtered_df.empty:
         fig = px.line(filtered_df, x="Date", y="Registrations", color="Category",
                       title="Monthly Vehicle Registrations")
     st.plotly_chart(fig, use_container_width=True)
+
+    st.markdown("---")  # separator
+
+    st.subheader("📌 Key Insights")
+
+    # Total registrations
+    total_reg = filtered_df["Registrations"].sum()
+
+    # Group by Category/Manufacturer for rankings
+    grouped = filtered_df.groupby("Category")["Registrations"].sum().reset_index()
+
+    # Best performer
+    best = grouped.loc[grouped["Registrations"].idxmax()]
+    best_cat, best_val = best["Category"], best["Registrations"]
+
+    # Worst performer
+    worst = grouped.loc[grouped["Registrations"].idxmin()]
+    worst_cat, worst_val = worst["Category"], worst["Registrations"]
+
+    # Avg YoY growth (if column exists)
+    avg_yoy = filtered_df["YoY_Growth"].mean(skipna=True)
+
+    # Show metrics in 4 columns
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Total Registrations", f"{total_reg:,}")
+    col2.metric("Top Performer", best_cat, f"{best_val:,}")
+    col3.metric("Lowest Performer", worst_cat, f"{worst_val:,}")
+    col4.metric("Avg YoY Growth", f"{avg_yoy:.2f}%")
+
+    
 else:
     st.info("👆 Choose at least one Vehicle Type or Manufacturer to see results.")
