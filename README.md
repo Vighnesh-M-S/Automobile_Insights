@@ -5,8 +5,8 @@
 1.  Clone this repository:
 
     ``` bash
-    git clone <your-repo-link>
-    cd <repo-folder>
+    git clone https://github.com/Vighnesh-M-S/Automobile_Insights.git
+    cd Automobile_Insights
     ```
 
 2.  Install required dependencies:
