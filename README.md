@@ -66,16 +66,10 @@
 
 ## 🎥 Explanation Video
 
-\[Video Link](https://youtu.be/VGZElfVpCNg)
+[![Video Link](https://github.com/user-attachments/assets/335091be-0113-4b6b-b8d1-73f93f2e2725)](https://youtu.be/VGZElfVpCNg)
 
 ------------------------------------------------------------------------
 
 ## 💡 Valuable Insight
-
-\[Insert the most surprising or valuable insight you observed from the
-data here.\]
-
-Example: *"Electric 2W registrations have grown consistently \>20% YoY
-since 2022, signaling a clear investor opportunity in the EV segment."*
 
 ------------------------------------------------------------------------
