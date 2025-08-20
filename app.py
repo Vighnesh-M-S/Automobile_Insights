@@ -18,60 +18,63 @@ df_manufacturer = add_growth(df_manufacturer)
 
 st.title("Vahan Vehicle Registrations Dashboard")
 
-# Toggle between Category and Manufacturer
-view_option = st.radio("View Mode", ["Vehicle Type", "Manufacturer"], horizontal=True)
+st.sidebar.header("Filters")
 
-# -------------------------------
-# Category Mode
-# -------------------------------
+# ✅ Radio button in sidebar
+view_option = st.sidebar.radio("View Mode", ["Vehicle Type", "Manufacturer"])
+
+# Date range filter (common)
 if view_option == "Vehicle Type":
-    categories = st.sidebar.multiselect(
-        "Select Vehicle Categories",
-        df_category["Category"].unique(),
-        default=df_category["Category"].unique()
-    )
-
     date_range = st.sidebar.date_input(
         "Select Date Range",
         [df_category["Date"].min(), df_category["Date"].max()]
     )
-
-    start_date = pd.to_datetime(date_range[0])
-    end_date = pd.to_datetime(date_range[1])
-
-    mask = (df_category["Category"].isin(categories)) & (df_category["Date"].between(start_date, end_date))
-    filtered_df = df_category[mask]
-
-# -------------------------------
-# Manufacturer Mode
-# -------------------------------
 else:
-    # Search bar with suggestions
-    manufacturer_input = st.text_input("🔍 Search Manufacturer (type to see matches)")
-    manufacturer_list = []
-
-    if manufacturer_input:
-        matches = [m for m in df_manufacturer["Category"].unique() if manufacturer_input.lower() in m.lower()]
-        if matches:
-            manufacturer_list = st.multiselect(
-                "Select up to 5 manufacturers",
-                matches,
-                max_selections=5
-            )
-
     date_range = st.sidebar.date_input(
         "Select Date Range",
         [df_manufacturer["Date"].min(), df_manufacturer["Date"].max()]
     )
 
-    start_date = pd.to_datetime(date_range[0])
-    end_date = pd.to_datetime(date_range[1])
+start_date = pd.to_datetime(date_range[0])
+end_date = pd.to_datetime(date_range[1])
 
-    if manufacturer_list:
-        mask = (df_manufacturer["Category"].isin(manufacturer_list)) & (df_manufacturer["Date"].between(start_date, end_date))
+filtered_df = pd.DataFrame()  # start empty
+
+# -------------------------------
+# Vehicle Type Mode
+# -------------------------------
+if view_option == "Vehicle Type":
+    categories = st.sidebar.multiselect(
+        "Vehicle Types (type to search)",
+        options=sorted(df_category["Category"].dropna().astype(str).str.strip().unique()),
+        default=[]  # empty until user picks
+    )
+    if categories:
+        mask = (df_category["Category"].isin(categories)) & (df_category["Date"].between(start_date, end_date))
+        filtered_df = df_category[mask]
+
+# -------------------------------
+# Manufacturer Mode
+# -------------------------------
+else:
+    manufacturers = sorted(df_manufacturer["Category"].dropna().astype(str).str.strip().unique())
+
+    selected_manu = st.sidebar.multiselect(
+        "Manufacturers (type to search, pick up to 5)",
+        options=manufacturers,
+        default=[],  # empty until user picks
+        # If your Streamlit version supports it, uncomment the next line:
+        # max_selections=5
+    )
+
+    # Fallback cap if your Streamlit version doesn’t support max_selections
+    if len(selected_manu) > 5:
+        st.sidebar.warning("Select up to 5 manufacturers. Using the first 5 you picked.")
+        selected_manu = selected_manu[:5]
+
+    if selected_manu:
+        mask = (df_manufacturer["Category"].isin(selected_manu)) & (df_manufacturer["Date"].between(start_date, end_date))
         filtered_df = df_manufacturer[mask]
-    else:
-        filtered_df = df_manufacturer[df_manufacturer["Date"].between(start_date, end_date)]
 
 # -------------------------------
 # Growth Toggle
@@ -95,7 +98,6 @@ if not filtered_df.empty:
     else:
         fig = px.line(filtered_df, x="Date", y="Registrations", color="Category",
                       title="Monthly Vehicle Registrations")
-
     st.plotly_chart(fig, use_container_width=True)
 else:
-    st.warning("No data available for the selected filters.")
+    st.info("👆 Choose at least one Vehicle Type or Manufacturer to see results.")
